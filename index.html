@@ -27,6 +27,7 @@
   --wood-dark:#6e4529;
   --teal:#7cc0cd;       /* el "OFF" del PDF */
   --teal-ink:#24707e;
+  --new:#e4e33a;        /* amarillo del trono de Apocalipsis 4:2 */
   --wa:#1f9d55;
   --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
   --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -107,7 +108,7 @@ nav.main a:hover{color:var(--ink)}
 .garment{position:relative;display:block;aspect-ratio:.8;transform-style:preserve-3d;transform:rotateY(var(--ry,0deg)) rotateX(var(--rx,0deg));transition:transform .55s cubic-bezier(.2,.8,.2,1)}
 .flipper{position:absolute;inset:0;display:block;transform-style:preserve-3d;transform:rotateY(var(--flip,0deg));transition:transform .48s cubic-bezier(.7,0,.3,1)}
 .hang.tracking .garment{transition:transform .12s linear}
-.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;align-items:flex-start;justify-content:center}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:block}
 .face.front{transform:translateZ(calc(var(--depth,20px) / 2))}
 .face.back{transform:rotateY(180deg) translateZ(calc(var(--depth,20px) / 2))}
 /* cuerpo: capas con la silueta de la remera apiladas en profundidad, para que tenga relleno al girar */
@@ -123,10 +124,17 @@ nav.main a:hover{color:var(--ink)}
 .idle{display:block;transform-style:preserve-3d;transform:rotateY(calc(var(--idle,0) * 1deg))}
 .face>*{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .rack-scroll.pending .hang{visibility:hidden}
-.face img{position:relative;z-index:2;width:100%;height:100%;object-fit:contain;object-position:top center;-webkit-user-drag:none;user-select:none}
+.face img{position:absolute;z-index:2;top:0;left:0;width:100%;height:100%;max-width:none;object-fit:contain;object-position:50% 0;-webkit-user-drag:none;user-select:none}
 .wood{position:absolute;z-index:1;left:21%;width:58%;top:.5%;height:11%}
 .hang .tag{position:absolute;top:60px;left:calc(50% + 12px);z-index:4;background:var(--ink);color:var(--paper-2);font-size:.62rem;font-weight:700;letter-spacing:.08em;padding:4px 7px 4px 10px;border-radius:2px;transform:rotate(8deg);transform-origin:left center;pointer-events:none;clip-path:polygon(7px 0,100% 0,100% 100%,7px 100%,0 50%)}
 .hang .tag.teal{background:var(--teal);color:var(--ink)}
+.hang .tag.nuevo{background:var(--new);color:var(--ink);font-size:.68rem;padding:5px 8px 5px 11px;animation:tagSwing 3.2s ease-in-out infinite;transform-origin:0 50%}
+@keyframes tagSwing{0%,100%{transform:rotate(6deg)}50%{transform:rotate(14deg)}}
+.hang.is-new .name{color:var(--ink)}
+.new-badge{position:absolute;z-index:3;top:10px;left:10px;background:var(--new);color:var(--ink);font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:4px 8px;border-radius:2px;animation:newPulse 2.4s ease-in-out infinite}
+@keyframes newPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--new) 70%,transparent)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--new) 0%,transparent)}}
+.card.is-new .pic{outline:2px solid var(--new);outline-offset:-2px}
+.pd-new{display:inline-block;margin-right:8px;background:var(--new);color:var(--ink);padding:2px 7px;border-radius:2px;letter-spacing:.14em}
 .hang .name{display:block;text-align:center;margin-top:34px;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hang:hover .name{color:var(--ink)}
 
@@ -307,9 +315,9 @@ dialog.pd[open]{animation:pop .45s cubic-bezier(.2,.9,.25,1)}
   .step+.step{padding-left:0;border-left:0;border-top:1px solid var(--line)}
   .sizes,.about{grid-template-columns:minmax(0,1fr)}
   .perks{grid-template-columns:repeat(2,minmax(0,1fr))}
-  dialog.pd{height:100%;border-radius:0}
-  .pd-in{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;overflow-y:auto;height:100%}
-  .stage{padding-top:30px}
+  dialog.pd{height:100%;height:100dvh;max-height:100dvh;border-radius:0}
+  .pd-in{display:block;overflow-y:auto;height:100%;-webkit-overflow-scrolling:touch}
+  .stage{padding-top:30px;min-height:auto;justify-content:flex-start}
   .viewer{width:min(250px,62%)}
   .spin{--depth:16px}
   .pd-cta{position:sticky;bottom:0;z-index:5;background:var(--paper-2);padding-block:10px calc(10px + env(safe-area-inset-bottom,0px));margin-inline:-4px;padding-inline:4px}
@@ -510,6 +518,7 @@ const PRICES = {
 };
 const SIZES = ["S","M","L","XL","XXL"];
 const PRODUCTS = [
+  { id:"apocalipsis",      name:"Apocalipsis 4:2",    line:"oversize", color:"Negra",  ref:"Apocalipsis 4:2", verse:"Y he aquí, un trono establecido en el cielo, y en el trono, uno sentado.", isNew:true },
   { id:"emaus",            name:"Emaús",              line:"oversize", color:"Negra",  ref:"Lucas 24:32",     verse:"No fue solo un camino. Es un corazón que vuelve a arder." },
   { id:"isaias-negra",     name:"Isaías 43:2",        line:"basica",   color:"Negra",  ref:"Isaías 43:2",     verse:"Cuando pases por aguas profundas, yo estaré contigo." },
   { id:"abba",             name:"Abba",               line:"oversize", color:"Negra",  ref:"Romanos 8:15",    verse:"Abba Padre, te llama mi corazón." },
@@ -591,7 +600,7 @@ const swing = []; // estado físico de cada percha
 
 PRODUCTS.forEach((p, i) => {
   const el = document.createElement("div");
-  el.className = "hang";
+  el.className = "hang" + (p.isNew ? " is-new" : "");
   el.dataset.line = p.line;
   el.style.setProperty("--d", (i * 0.06) + "s");
   el.innerHTML = `
@@ -604,7 +613,7 @@ PRODUCTS.forEach((p, i) => {
           ${LITE ? "" : `<span class="body" style="--m:url('${imgSm(p,"front")}');--m2:url('${imgSm(p,"back")}');--c:${bodyColor(p)}">${slices(10)}</span>`}
         </span></span></span>
       </button>
-      <span class="tag ${p.line==="oversize"?"teal":""}">${PRICES[p.line].off.replace(" OFF","").replace(/^/,"-")}</span>
+      ${p.isNew ? `<span class="tag nuevo">NUEVO</span>` : `<span class="tag ${p.line==="oversize"?"teal":""}">${PRICES[p.line].off.replace(" OFF","").replace(/^/,"-")}</span>`}
     </span>
     <span class="name">${p.name}</span>`;
   rack.appendChild(el);
@@ -841,12 +850,12 @@ document.querySelectorAll(".chip").forEach(c => {
 });
 
 /* ---------- Catálogo en grilla ---------- */
-PRODUCTS.map((p, i) => [p, i]).sort((a, b) => a[0].name.localeCompare(b[0].name, "es")).forEach(([p, i]) => {
+PRODUCTS.map((p, i) => [p, i]).sort((a, b) => (b[0].isNew ? 1 : 0) - (a[0].isNew ? 1 : 0) || a[0].name.localeCompare(b[0].name, "es")).forEach(([p, i]) => {
   const b = document.createElement("button");
-  b.className = "card";
+  b.className = "card" + (p.isNew ? " is-new" : "");
   b.innerHTML = `
     <span class="pic"><img class="f" src="${imgSm(p,"back")}" srcset="${srcset(p,"back")}" sizes="(max-width:760px) 45vw, 370px" width="480" height="560" alt="${p.name}, espalda" loading="lazy" decoding="async"><img class="b" src="${imgSm(p,"front")}" srcset="${srcset(p,"front")}" sizes="(max-width:760px) 45vw, 370px" width="480" height="560" alt="${p.name}, frente" loading="lazy" decoding="async">
-      <span class="side"><span class="s1">Espalda</span><span class="s2">Frente</span></span></span>
+      <span class="side"><span class="s1">Espalda</span><span class="s2">Frente</span></span>${p.isNew ? `<span class="new-badge">Nuevo</span>` : ""}</span>
     <span class="meta"><span class="nm">${p.name}</span><span class="price-pill"><span class="old">${money(PRICES[p.line].old)}</span><span class="new">${money(PRICES[p.line].now)}</span></span></span>
     <span class="vs"><span class="color" style="background:${p.color === "Negra" ? "#121314" : "#ffffff"}"></span>${p.color} · ${p.ref}</span>`;
   b.addEventListener("click", () => openProduct(i, "back"));
@@ -893,7 +902,7 @@ function fill(i) {
   $("#pdBody").style.setProperty("--c", bodyColor(p));
   // dejamos listas las de al lado para que las flechas sean instantáneas
   [i - 1, i + 1].forEach(k => { const q = PRODUCTS[(k + PRODUCTS.length) % PRODUCTS.length]; ["front","back"].forEach(sd => { new Image().src = img(q, sd); }); });
-  $("#pdEyebrow").textContent = (p.line === "basica" ? "Remera básica" : "Remera oversize") + " · " + p.color;
+  $("#pdEyebrow").innerHTML = (p.isNew ? `<span class="pd-new">Nuevo</span>` : "") + (p.line === "basica" ? "Remera básica" : "Remera oversize") + " · " + p.color;
   $("#pdName").textContent = p.name;
   $("#pdVerse").innerHTML = `“${p.verse}”<cite>${p.ref}</cite>`;
   $("#pdOld").textContent = money(pr.old); $("#pdNew").textContent = money(pr.now); $("#pdOff").textContent = pr.off;
@@ -906,6 +915,7 @@ function openProduct(i, side = "front") {
   fill(i);
   rot = side === "back" ? 180 : 0; target = rot; rotV = 0; applyRot();
   if (!dlg.open) dlg.showModal();
+  const pin = dlg.querySelector(".pd-in"); if (pin) pin.scrollTop = 0;
   pv.v = reduce ? 0 : 60; animate();
 }
 function nav(d) {
